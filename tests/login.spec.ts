@@ -13,7 +13,7 @@ test.describe('Login', () => {
     await loginPage.goto();
     await loginPage.login(VALID_USERNAME, VALID_PASSWORD);
 
-    await expect(page.locator('.title')).toHaveText('Products');
+    await expect(page.locator('[data-test="title"]')).toHaveText('Products');
   });
 
   test('invalid login shows error message', async ({ page }) => {
@@ -22,8 +22,6 @@ test.describe('Login', () => {
     await loginPage.goto();
     await loginPage.login(INVALID_USERNAME, INVALID_PASSWORD);
 
-    await expect(loginPage.errorMessage).toContainText(
-      'Username and password do not match any user in this service'
-    );
+    await expect(loginPage.errorMessage).toContainText('Username and password do not match any user in this service');
   });
 });

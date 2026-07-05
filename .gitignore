@@ -1,13 +1,8 @@
+.env
 node_modules/
 dist/
 reports/playwright-report.json
-reports/failed-tests.json
-reports/failure-context.md
-reports/manual-review-required.md
-reports/test-review-report.md
-reports/test-case-context.md
-reports/fix-reports/
-reports/manual-test-cases.md
+reports/investigation/
 reports/html/
 test-results/
 playwright-report/

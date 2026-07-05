@@ -20,6 +20,9 @@ export class CartPage {
   }
 
   async proceedToCheckout(): Promise<void> {
-    await this.checkoutButton.click();
+    await Promise.all([
+      this.page.waitForURL(/checkout-step-one\.html/),
+      this.checkoutButton.click(),
+    ]);
   }
 }
