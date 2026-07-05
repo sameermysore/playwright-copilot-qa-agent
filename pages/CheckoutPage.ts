@@ -18,7 +18,7 @@ export class CheckoutPage {
     this.continueButton = page.getByRole('button', { name: 'Continue' });
     this.finishButton = page.getByRole('button', { name: 'Finish' });
     this.pageTitle = page.locator('.title');
-    this.completeHeader = page.locator('.complete-header');
+    this.completeHeader = page.getByRole('heading', { name: 'Thank you for your order!' });
   }
 
   async fillCustomerInfo(firstName: string, lastName: string, postalCode: string): Promise<void> {
@@ -33,6 +33,6 @@ export class CheckoutPage {
   }
 
   async expectOrderComplete(): Promise<void> {
-    await expect(this.completeHeader).toHaveText('Thank you for your order!');
+    await expect(this.completeHeader).toBeVisible();
   }
 }
