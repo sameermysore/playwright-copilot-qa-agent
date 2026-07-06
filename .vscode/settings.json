@@ -1,12 +1,14 @@
 {
   "chat.tools.terminal.enableAutoApprove": true,
   "chat.tools.terminal.autoApprove": {
-    "npm run collect:failures": true,
     "npm run test:failed": true,
+    "npm run render:rca": true,
     "npm test": true,
+    "npx playwright test": true,
     "/^npm run test:failed$/": true,
-    "/^npm run collect:failures$/": true,
+    "/^npm run render:rca$/": true,
     "/^npm test$/": true,
+    "/^npx playwright test/": true,
     "/^npm run demo:clean$/": true
   },
   "chat.agent.maxRequests": 40
