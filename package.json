@@ -4,10 +4,9 @@
   "description": "AI QA agent for Playwright failure investigation",
   "private": true,
   "scripts": {
-    "test": "tsx scripts/run-tests.ts",
+    "test": "playwright test",
     "test:failed": "tsx scripts/run-failed-tests.ts",
-    "collect:failures": "tsx scripts/collect-failures.ts",
-    "resolve:app-repo": "tsx scripts/resolve-app-repo.ts",
+    "render:rca": "tsx scripts/render-rca-report.ts",
     "demo:clean": "tsx scripts/demo-clean.ts"
   },
   "devDependencies": {

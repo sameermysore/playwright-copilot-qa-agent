@@ -2,8 +2,9 @@
 node_modules/
 dist/
 reports/playwright-report.json
-reports/investigation/
 reports/html/
+ai-reports/*
+!ai-reports/README.md
 test-results/
 playwright-report/
 blob-report/

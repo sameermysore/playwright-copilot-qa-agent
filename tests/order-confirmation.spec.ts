@@ -23,12 +23,9 @@ test.describe('Order confirmation', () => {
     await cartPage.expectLoaded();
     await cartPage.proceedToCheckout();
     await checkoutPage.fillCustomerInfo('Jane', 'Doe', '12345');
+    await checkoutPage.expectReceiptSummaryVisible();
     await checkoutPage.finishOrder();
 
-    // Checkout reached — this test is about receipt content, not the thank-you heading
-    await expect(page.getByRole('heading', { name: 'Thank you for your order!' })).toBeVisible();
-
-    // Product-confirmed behavior: itemized subtotal is not shown on order-complete page
-    await expect(page.locator('.summary-subtotal')).toHaveCount(0);
+    await checkoutPage.expectOrderComplete();
   });
 });

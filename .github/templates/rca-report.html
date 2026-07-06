@@ -1,4 +1,3 @@
-<!-- Agent: replace the ENTIRE rca-report.html file with this structure. One document only — never append. -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -48,7 +47,8 @@
 
     .meta {
       display: flex;
-      gap: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem 1.5rem;
       margin-top: 0.75rem;
       font-size: 0.85rem;
       color: var(--muted);
@@ -63,9 +63,15 @@
       font-size: 0.95rem;
     }
 
-    .summary strong { display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); margin-bottom: 0.35rem; }
+    .summary strong {
+      display: block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      margin-bottom: 0.35rem;
+    }
 
-    /* One card per failure */
     .case {
       background: var(--card);
       border: 1px solid var(--border);
@@ -79,7 +85,6 @@
       border-bottom: 1px solid var(--border);
     }
 
-    /* Primary: short test title only — NOT the full Playwright path */
     .case-head h2 {
       font-size: 1.05rem;
       font-weight: 600;
@@ -87,7 +92,6 @@
       margin-bottom: 0.35rem;
     }
 
-    /* Secondary: file + suite, muted */
     .case-meta {
       font-size: 0.8rem;
       color: var(--muted);
@@ -100,7 +104,6 @@
       border-radius: 4px;
     }
 
-    /* Quick scan row */
     .facts {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -150,13 +153,10 @@
       margin-bottom: 0.3rem;
     }
 
-    .block p, .block li { font-size: 0.9rem; color: var(--text); }
-    .block ul { margin-left: 1.1rem; }
+    .block p { font-size: 0.9rem; color: var(--text); }
+    .block ul { margin-left: 1.1rem; font-size: 0.9rem; color: var(--text); }
 
-    details {
-      margin-top: 0.5rem;
-      font-size: 0.85rem;
-    }
+    details { margin-top: 0.5rem; font-size: 0.85rem; }
 
     details summary {
       cursor: pointer;
@@ -179,6 +179,10 @@
       overflow-y: auto;
     }
 
+    .status-pass { color: var(--pass); }
+    .status-warn { color: var(--warn); }
+    .status-fail { color: var(--fail); }
+
     .footer {
       margin-top: 1.5rem;
       text-align: center;
@@ -198,60 +202,22 @@
       <h1>Investigation report</h1>
       <p>Playwright test failures</p>
       <div class="meta">
-        <span>Generated <time datetime=""><!-- ISO from failure-report.md Generated: line --></time></span>
-        <span><!-- COUNT --> failures</span>
-        <span><!-- OVERALL_STATUS --></span>
+        <span>Generated <time datetime="{{GENERATED_ISO}}">{{GENERATED_ISO}}</time></span>
+        <span>{{FAILURE_COUNT}} failure(s) investigated</span>
+        <span>{{OVERALL_STATUS}}</span>
       </div>
     </header>
 
     <div class="summary">
       <strong>Summary</strong>
-      <p><!-- 2–3 sentences max --></p>
+      <p>{{SUMMARY}}</p>
     </div>
 
-    <!-- Copy .case block for each failure -->
-
-    <section class="case">
-      <div class="case-head">
-        <h2><!-- Test title only, e.g. Complete checkout flow for a single item --></h2>
-        <div class="case-meta">
-          <code><!-- tests/checkout.spec.ts --></code>
-          · <!-- optional suite name, e.g. Checkout -->
-        </div>
-      </div>
-      <div class="facts">
-        <div><label>Cause</label><span><!-- locator --></span></div>
-        <div><label>Confidence</label><span><!-- high --></span></div>
-        <div><label>Action</label><span><!-- fix applied --></span></div>
-      </div>
-      <div class="case-body">
-        <div class="blurb"><!-- One plain sentence: what went wrong --></div>
-
-        <div class="block">
-          <h3>Why</h3>
-          <p><!-- 1–2 short sentences. What ruled out. --></p>
-        </div>
-
-        <div class="block">
-          <h3>Application source</h3>
-          <p><!-- Inspected: yes/no. Repo path if yes. Test vs app. Omit this block only when Step 3b was not applicable (high confidence from test-side RCA). --></p>
-        </div>
-
-        <div class="block">
-          <h3>What we did</h3>
-          <p><!-- Fix, manual review, or pending --></p>
-        </div>
-
-        <details>
-          <summary>Technical error</summary>
-          <pre><!-- Clean error text, no ANSI codes --></pre>
-        </details>
-      </div>
-    </section>
+    {{CASES}}
 
     <div class="summary">
       <strong>Validation</strong>
-      <p>Ran <code>npm run test:failed</code> at <time datetime=""><!-- ISO from updated failure-report.md after validation --></time>. <!-- result --></p>
+      <p>{{VALIDATION}}</p>
     </div>
 
     <p class="footer">TestPilot AI</p>
