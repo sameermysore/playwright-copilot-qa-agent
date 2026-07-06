@@ -1,12 +1,12 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { AI_REPORTS_DIR_NAME } from './lib/ai-reports-session';
 
 const ROOT = process.cwd();
 
 const FILES = ['reports/playwright-report.json'];
 
 const DIRS = [
-  'reports/investigation',
   'reports/html',
   'test-results',
   'playwright-report',
@@ -29,6 +29,23 @@ function removeDir(relativePath: string): void {
   }
 }
 
+function cleanAiReports(): void {
+  const aiReportsDir = path.join(ROOT, AI_REPORTS_DIR_NAME);
+  if (!fs.existsSync(aiReportsDir)) {
+    return;
+  }
+
+  for (const entry of fs.readdirSync(aiReportsDir)) {
+    if (entry === 'README.md') {
+      continue;
+    }
+
+    const fullPath = path.join(aiReportsDir, entry);
+    fs.rmSync(fullPath, { recursive: true, force: true });
+    console.log(`Removed ${AI_REPORTS_DIR_NAME}/${entry}`);
+  }
+}
+
 for (const file of FILES) {
   removeFile(file);
 }
@@ -37,13 +54,6 @@ for (const dir of DIRS) {
   removeDir(dir);
 }
 
-// Restore empty investigation folder with manual-review template
-const investigationDir = path.join(ROOT, 'reports', 'investigation');
-fs.mkdirSync(investigationDir, { recursive: true });
-fs.writeFileSync(
-  path.join(investigationDir, 'manual-review.md'),
-  '# Manual Review\n\nThe agent appends entries here when a failure root cause is unclear.\n',
-  'utf8'
-);
+cleanAiReports();
 
 console.log('Reports cleared. Tests and page objects unchanged.');
