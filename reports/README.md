@@ -1,21 +1,12 @@
 # Reports
 
-## Playwright output (from `npm test`)
+Playwright test output only. For TestPilot AI investigation output, see [`ai-reports/`](../ai-reports/).
 
-- `playwright-report.json` — raw JSON input for failure collection
-- `html/` — Playwright HTML report (`npx playwright show-report reports/html`)
+## Files
 
-## Investigation output (agent workflow)
-
-All investigation artifacts live in **`investigation/`**:
-
-| File | Created by |
+| Path | Source |
 | --- | --- |
-| `investigation/failure-report.md` | `npm test` (automatic) |
-| `investigation/failed-tests.json` | agent runs `collect:failures` |
-| `investigation/rca-report.html` | agent after RCA (open in browser) |
-| `investigation/manual-review.md` | agent when cause is unclear |
+| `playwright-report.json` | `npm test` — JSON reporter input |
+| `html/` | `npm test` — Playwright HTML report (`npx playwright show-report reports/html`) |
 
-HTML template for the agent: `.github/templates/rca-report.html`
-
-Clear generated files with `npm run demo:clean`.
+Clear Playwright and AI reports with `npm run demo:clean`.
