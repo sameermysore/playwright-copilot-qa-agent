@@ -1,15 +1,13 @@
 {
   "name": "playwright-copilot-qa-agent",
   "version": "1.0.0",
-  "description": "POC: GitHub Copilot QA agent for Playwright",
+  "description": "AI QA agent for Playwright failure investigation",
   "private": true,
   "scripts": {
-    "test": "playwright test",
+    "test": "tsx scripts/run-tests.ts",
     "test:failed": "tsx scripts/run-failed-tests.ts",
-    "prepare:failures": "tsx scripts/analyze-failures.ts",
-    "analyze:failures": "tsx scripts/analyze-failures.ts",
-    "prepare:review": "tsx scripts/review-tests.ts",
-    "prepare:test-cases": "tsx scripts/generate-test-cases.ts",
+    "collect:failures": "tsx scripts/collect-failures.ts",
+    "resolve:app-repo": "tsx scripts/resolve-app-repo.ts",
     "demo:clean": "tsx scripts/demo-clean.ts"
   },
   "devDependencies": {

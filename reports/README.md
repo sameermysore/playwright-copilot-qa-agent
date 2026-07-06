@@ -1,19 +1,21 @@
-Generated reports appear here when you run:
+# Reports
 
-- `npm test` → `playwright-report.json` (Playwright JSON reporter)
-- `npm run prepare:failures` → `failure-context.md`, `manual-review-required.md`, `failed-tests.json`
-- `npm run prepare:review` → `test-review-report.md`
-- `npm run prepare:test-cases` → `test-case-context.md`
+## Playwright output (from `npm test`)
 
-Copilot may also write:
+- `playwright-report.json` — raw JSON input for failure collection
+- `html/` — Playwright HTML report (`npx playwright show-report reports/html`)
 
-- `manual-test-cases.md` during test case generation
-- `fix-reports/*.md` after fixing failures (plain-language report for engineers)
+## Investigation output (agent workflow)
 
-## Reset before a demo
+All investigation artifacts live in **`investigation/`**:
 
-```bash
-npm run demo:clean
-```
+| File | Created by |
+| --- | --- |
+| `investigation/failure-report.md` | `npm test` (automatic) |
+| `investigation/failed-tests.json` | agent runs `collect:failures` |
+| `investigation/rca-report.html` | agent after RCA (open in browser) |
+| `investigation/manual-review.md` | agent when cause is unclear |
 
-Removes all generated files above (plus HTML report, fix-reports, test-results). Keeps this README and source code unchanged.
+HTML template for the agent: `.github/templates/rca-report.html`
+
+Clear generated files with `npm run demo:clean`.

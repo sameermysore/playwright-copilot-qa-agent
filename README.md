@@ -1,33 +1,50 @@
-# Playwright Copilot QA Agent (POC)
+# Playwright Failure Investigation Agent
 
-Small demo project for **GitHub Copilot Agent Mode** + **Playwright**.
+Investigate and fix Playwright test failures with agentic RCA.
 
-Copilot does the thinking. This repo prepares the context Copilot needs.
-
-## How it works
+## Workflow
 
 ```text
-1. You run Playwright tests (npm test)
-2. Playwright writes reports/playwright-report.json
-3. You run a prepare command to build Copilot context
-4. You type a slash command in VS Code Copilot Chat
-5. Copilot reads the report + skill and does the work
+You:   npm test
+You:   investigate failed test     → TestPilot AI reads report, RCA, fixes
+Agent: npm run test:failed         → validates + refreshes failure-report.md
+Agent: updates rca-report.html
 ```
 
-No Copilot API. Everything runs in VS Code with your Copilot subscription.
+You only run **`npm test`**. TestPilot AI runs **`npm run test:failed`** after fixes.
 
-## Folder map
+## Copilot setup (required for terminal)
+
+TestPilot AI is built for **GitHub Copilot in VS Code**. For the agent to run commands itself:
+
+1. **Agent mode** — in Copilot Chat, pick **Agent** (not Ask / Chat).
+2. **Select TestPilot AI** — agents dropdown → **TestPilot AI** (loads `.github/agents/TestPilotAI.agent.md`).
+3. **Terminal tool enabled** — click **Configure Tools** in chat → ensure **Terminal** / **Run in Terminal** is checked.
+4. **Permissions** — set session to **Autopilot** or **Bypass Approvals** (permissions dropdown in chat input). `.vscode/settings.json` auto-approves `npm test` and `npm run test:failed`.
+
+**Common mistake:** an old agent config used `tools: ['terminal']`. Copilot’s alias is **`execute`**, not `terminal` — invalid names are ignored, so the agent got no shell. The agent now declares `tools: ['read', 'edit', 'search', 'execute']`.
+
+If Copilot still says *"provisioned without a terminal tool"*, you are likely in **Ask mode**, **Configure Tools** has terminal off, or a **subagent/skill fork** session (use TestPilot AI directly in Agent mode).
+
+## Project layout
 
 ```text
-tests/              Playwright tests (SauceDemo)
-pages/              Page objects
-requirements/       User story for test case generation
-scripts/            4 small scripts that build reports
-reports/            Generated reports (created when you run prepare:*)
 .github/
-  copilot-instructions.md   Global QA rules for Copilot
-  skills/                   3 skills (one per task)
-  prompts/                  3 slash commands for Copilot Chat
+  agents/TestPilotAI.agent.md       ← Copilot agent
+  skills/failure-investigation/     ← investigation skill
+  knowledge.md                      ← project-specific context
+  copilot-instructions.md
+scripts/
+tests/
+pages/
+reports/
+  playwright-report.json            ← from npm test
+  html/                             ← Playwright HTML report
+  investigation/                    ← all agent investigation output
+    failure-report.md
+    rca-report.html                 ← pretty RCA (open in browser)
+    manual-review.md
+    failed-tests.json
 ```
 
 ## Setup
@@ -37,102 +54,40 @@ npm install
 npx playwright install chromium
 ```
 
-Open in **VS Code**, enable **Copilot Chat → Agent mode**.
+VS Code → Copilot Chat → **Agent** mode → select **TestPilot AI** → enable **Terminal** in Configure Tools.
 
-## The 3 workflows
+### Optional application repository
 
-### 1. Fix failed tests
-
-```bash
-npm test
-npm run prepare:failures
-```
-
-In Copilot Chat:
-
-```text
-/fix-playwright-failures
-```
-
-Copilot fixes code and validates with `npm run test:failed` only — it should **not** re-run `npm test`.
-
-Copilot writes a readable report in **reports/fix-reports/** — test name, file, why it failed, what changed, pass/fail.
-
-Validate yourself if needed:
+To let the agent inspect application source during RCA (fallback when test-side analysis is not confident), set `APP_REPO_PATH` in a `.env` file:
 
 ```bash
-npm run test:failed
+cp .env.example .env
+# APP_REPO_PATH=../development-repo
 ```
 
-Step 1 runs Playwright and writes `reports/playwright-report.json` (via the JSON reporter in `playwright.config.ts`).
-Step 2 reads that report and writes `reports/failure-context.md` for Copilot.
+Relative paths resolve from this project root. When unset or the directory does not exist, behaviour is unchanged — no errors or warnings.
 
-Reads: `reports/failure-context.md`, `reports/manual-review-required.md` (if any need review)  
-Writes: `reports/fix-reports/*.md` (readable fix report)
-
----
-
-### 2. Review test quality
+Verify configuration:
 
 ```bash
-npm run prepare:review
+npm run resolve:app-repo
 ```
 
-In Copilot Chat:
+Prints the resolved path on success; exits silently on failure.
 
-```text
-/review-playwright-tests
-```
+## Commands
 
-Reads: `reports/test-review-report.md`
-
----
-
-### 3. Generate manual test cases
-
-Before the demo (optional reset):
-
-```bash
-npm run demo:clean
-```
-
-During the demo:
-
-```bash
-npm run prepare:test-cases
-```
-
-In Copilot Chat:
-
-```text
-/generate-test-cases
-```
-
-Copilot writes **`reports/manual-test-cases.md`**.
-
-Reads: `reports/test-case-context.md` and `requirements/login-requirement.md`
-
----
-
-## Commands cheat sheet
-
-| Terminal | Copilot slash | Purpose |
+| Command | Who | Purpose |
 | --- | --- | --- |
-| `npm test` then `npm run prepare:failures` | `/fix-playwright-failures` | Fix failing tests safely |
-| `npm run prepare:review` | `/review-playwright-tests` | Review test quality |
-| `npm run prepare:test-cases` | `/generate-test-cases` | Generate manual test cases |
-| `npm run demo:clean` | — | Clear generated reports before a demo |
-| `npm test` | — | Run all Playwright tests |
-| `npm run test:failed` | — | Re-run only failed tests |
+| `npm test` | You | Run all tests + refresh failure report |
+| `npm run test:failed` | Agent | After fixes — re-run failures + refresh report |
+| `npm run resolve:app-repo` | Either | Print `APP_REPO_PATH` when configured (silent otherwise) |
+| `npm run demo:clean` | Either | Clear generated reports |
 
-## Key ideas
+## Demo failures (intentional)
 
-- **Framework** = scripts + reports (prepares context)
-- **Agent** = GitHub Copilot in VS Code
-- **Skill** = step-by-step instructions in `.github/skills/`
-- **AUTO_FIX_CANDIDATE** = safe for Copilot to fix
-- **MANUAL_REVIEW_REQUIRED** = Copilot should explain, not blindly patch
-
-## Sample app
-
-Tests run against [SauceDemo](https://www.saucedemo.com/): login, cart, checkout.
+| Test | Expected agent outcome |
+| --- | --- |
+| `login.spec.ts` — successful login | Fix test (`Product` → `Products`) |
+| `checkout.spec.ts` — complete checkout | Fix page object locator |
+| `order-confirmation.spec.ts` — itemized receipt | **Manual review** — fails on `.summary-subtotal`; see knowledge.md |

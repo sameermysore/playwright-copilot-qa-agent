@@ -3,19 +3,11 @@ import path from 'node:path';
 
 const ROOT = process.cwd();
 
-const FILES = [
-  'reports/playwright-report.json',
-  'reports/failed-tests.json',
-  'reports/failure-context.md',
-  'reports/manual-review-required.md',
-  'reports/test-review-report.md',
-  'reports/test-case-context.md',
-  'reports/manual-test-cases.md',
-];
+const FILES = ['reports/playwright-report.json'];
 
 const DIRS = [
+  'reports/investigation',
   'reports/html',
-  'reports/fix-reports',
   'test-results',
   'playwright-report',
   'blob-report',
@@ -45,4 +37,13 @@ for (const dir of DIRS) {
   removeDir(dir);
 }
 
-console.log('Demo artifacts cleared. Source tests and requirements are unchanged.');
+// Restore empty investigation folder with manual-review template
+const investigationDir = path.join(ROOT, 'reports', 'investigation');
+fs.mkdirSync(investigationDir, { recursive: true });
+fs.writeFileSync(
+  path.join(investigationDir, 'manual-review.md'),
+  '# Manual Review\n\nThe agent appends entries here when a failure root cause is unclear.\n',
+  'utf8'
+);
+
+console.log('Reports cleared. Tests and page objects unchanged.');
