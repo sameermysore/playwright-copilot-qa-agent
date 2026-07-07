@@ -2,6 +2,14 @@
 
 Investigate and fix Playwright test failures with **TestPilot AI** — a skill-based Copilot agent for VS Code.
 
+## Engineering design docs
+
+For a concise architecture and workflow overview, see:
+
+- [Engineering Design Document](docs/engineering-design.md)
+- [Mermaid flowchart source](docs/working-flowchart.mmd)
+- [Ideation history (why/how/what)](docs/ideation-history.md)
+
 ## What you need
 
 This repo contains the **Playwright tests** and the **AI agent**. It does **not** include your application source code.

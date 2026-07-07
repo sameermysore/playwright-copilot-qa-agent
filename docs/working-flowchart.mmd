@@ -1,0 +1,22 @@
+flowchart TD
+    A[User request in Agent mode] --> B{Intent}
+    B -->|Run tests| C[playwright-test-runner all]
+    B -->|Investigate failures| D{Source repo path provided?}
+    D -->|No| E[Stop and ask for source path]
+    D -->|Yes| F[playwright-rca]
+    F --> G[Create ai-reports session artifacts]
+    G --> H[Classify each failure]
+    H --> I{recommendedAction}
+    I -->|auto-fix| J[playwright-fixer test/page-object changes]
+    I -->|inspect-source| K[Inspect app source and propose fix]
+    K --> L{User approves source changes?}
+    L -->|No| M[Record suggested fix only]
+    L -->|Yes| N[Apply source plus test updates]
+    J --> O[playwright-test-runner failed rerun]
+    N --> O
+    M --> O
+    O --> P[Update diagnosis and fixer report]
+    P --> Q{Need HTML report?}
+    Q -->|Yes| R[generate-rca-report]
+    Q -->|No| S[Finish]
+    R --> S
